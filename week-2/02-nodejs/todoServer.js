@@ -39,11 +39,56 @@
 
   Testing the server - run `npm run test-todoServer` command in terminal
  */
-  const express = require('express');
-  const bodyParser = require('body-parser');
-  
-  const app = express();
-  
-  app.use(bodyParser.json());
-  
-  module.exports = app;
+const express = require("express");
+const bodyParser = require("body-parser");
+const app = express();
+const port = 4200;
+app.use(bodyParser.json());
+
+let todos = [];
+app.get("/todos", function (req, res) {
+  res.send(todos);
+});
+
+app.post("/todos", function (req, res) {
+  todos.push(req.body);
+  // console.log(todos);
+  // console.log(todos.indexOf(req.body));
+  res.send(String(todos.indexOf(req.body)));
+});
+
+app.get("/todos/:id", function (req, res) {
+  const ID = req.params.id;
+  // console.log(todos[id.id]);
+  if (todos[ID]) {
+    res.send(todos[ID]);
+  } else {
+    res.status(404).send("404 not found");
+  }
+});
+
+app.put("/todos/:id", function (req, res) {
+  const ID = req.params.id;
+  if (todos[ID]) {
+    todos[ID] = req.body;
+    res.status(200).send("Updated");
+  } else {
+    res.status(404).send("404 not found");
+  }
+});
+
+app.delete("/todos/:id", function (req, res) {
+  const ID = req.params.id;
+  if (todos[ID]) {
+    todos.pop(req.body);
+    res.status(200).send("OK");
+  } else {
+    res.status(404).send("404 not found");
+  }
+});
+
+// app.listen(port, function () {
+//   console.log(`Listening on port ${port}`);
+// });
+
+module.exports = app;
